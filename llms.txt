@@ -1,6 +1,6 @@
 # lidhold
 
-> lidhold keeps a Mac awake with the lid closed while a coding agent is working, and lets it sleep when the agent stops. macOS 14 or newer, Apple Silicon. Command-line tool with a small root helper and a per-user daemon.
+> lidhold keeps a Mac awake with the lid closed for exactly as long as a task runs, a coding agent or any command, and lets it sleep when it is done. macOS 14 or newer, Apple Silicon. Command-line tool with a small root helper and a per-user daemon.
 
 ## What problem it solves
 
@@ -9,6 +9,12 @@ Closing a MacBook's lid is an explicit sleep request that user-level tools such 
 ## How agents use it
 
 Claude Code hooks call `lidhold hook claude-code` on session start, each tool call, stop, and session end. Each event refreshes, shortens, or drops a lease for that session. Any other tool can do the same with `lidhold lease take <name> --ttl 30m` and `lidhold lease release <name>`.
+
+## Any command
+
+    lidhold run -- cargo test
+
+Holds for exactly the command's lifetime: lease taken before it starts, refreshed while it runs, released on exit. Exit code passes through, Ctrl-C reaches the command.
 
 ## Install
 
@@ -27,7 +33,7 @@ Claude Code hooks call `lidhold hook claude-code` on session start, each tool ca
 
 ## Pricing
 
-Free: manual holds, status, doctor, and both guards. Paid: agent hooks and leases, USD 19 one time, one person on up to 3 machines, 7-day trial without a key. No subscription. No telemetry.
+Free: manual holds, status, doctor, and both guards. Paid: agent hooks, leases, and lidhold run, USD 19 one time, one person on up to 3 machines, 7-day trial without a key. No subscription. No telemetry.
 
 ## Links
 
