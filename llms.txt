@@ -1,0 +1,36 @@
+# lidhold
+
+> lidhold keeps a Mac awake with the lid closed while a coding agent is working, and lets it sleep when the agent stops. macOS 14 or newer, Apple Silicon. Command-line tool with a small root helper and a per-user daemon.
+
+## What problem it solves
+
+Closing a MacBook's lid is an explicit sleep request that user-level tools such as `caffeinate` cannot override. Long-running coding agents (Claude Code and similar) get suspended mid-task. `pmset disablesleep 1` does override the lid but nothing turns it back off, so the machine can drain or overheat in a bag. lidhold applies that override only while an agent is active, through leases with a TTL, and reverts it automatically: a root helper undoes the override after 90 seconds without a heartbeat, and battery and thermal guards release it early.
+
+## How agents use it
+
+Claude Code hooks call `lidhold hook claude-code` on session start, each tool call, stop, and session end. Each event refreshes, shortens, or drops a lease for that session. Any other tool can do the same with `lidhold lease take <name> --ttl 30m` and `lidhold lease release <name>`.
+
+## Install
+
+    brew install aanjaneykumarverma/tap/lidhold
+    lidhold setup
+
+`lidhold setup` installs the privileged helper (one sudo prompt), starts the per-user daemon, installs Claude Code hooks if Claude Code is present, and runs `lidhold doctor`.
+
+## Commands
+
+- `lidhold on --for 2h`, `lidhold off`, `lidhold status`, `lidhold doctor`
+- `lidhold lease take|release|list`
+- `lidhold hooks install|remove|status claude-code`
+- `lidhold config init|show` (guard thresholds: battery floor 20%, thermal ceiling "heavy")
+- `lidhold license activate|deactivate|status|verify`
+
+## Pricing
+
+Free: manual holds, status, doctor, and both guards. Paid: agent hooks and leases, USD 19 one time, one person on up to 3 machines, 7-day trial without a key. No subscription. No telemetry.
+
+## Links
+
+- Site and buy: https://lidhold.app
+- Docs: https://lidhold.app/docs/
+- Homebrew tap: https://github.com/aanjaneykumarverma/homebrew-tap

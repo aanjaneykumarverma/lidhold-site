@@ -4,6 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>lidhold</title>
+<link rel="canonical" href="https://lidhold.app/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"SoftwareApplication","name":"lidhold","url":"https://lidhold.app","applicationCategory":"DeveloperApplication","operatingSystem":"macOS 14 or newer","description":"Keeps a Mac awake with the lid closed while a coding agent such as Claude Code is working, and lets it sleep when the agent stops. Battery and thermal guards release the hold automatically.","offers":{"@type":"Offer","price":"19","priceCurrency":"USD","url":"https://checkout.dodopayments.com/buy/pdt_0NnVUeNKyDzDdqiLRRDQ6?quantity=1","description":"One-time purchase, one person, up to 3 machines, 7-day free trial"},"softwareHelp":{"@type":"CreativeWork","url":"https://lidhold.app/docs/"},"installUrl":"https://github.com/aanjaneykumarverma/homebrew-tap"},
+ {"@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"How do I keep my MacBook awake with the lid closed while Claude Code runs?","acceptedAnswer":{"@type":"Answer","text":"Install lidhold (brew install aanjaneykumarverma/tap/lidhold, then lidhold setup). Its Claude Code hooks take a lease while the agent works, the Mac stays awake through a closed lid on AC or battery, and the hold is released two minutes after the agent stops."}},
+  {"@type":"Question","name":"Why does lidhold need sudo?","acceptedAnswer":{"@type":"Answer","text":"Closing the lid is an explicit sleep request that user-level tools cannot override. lidhold installs a small root helper that sets pmset disablesleep and reverts it automatically after 90 seconds without a heartbeat. Only admin users can talk to it."}},
+  {"@type":"Question","name":"Does caffeinate keep a Mac awake with the lid closed?","acceptedAnswer":{"@type":"Answer","text":"No. caffeinate prevents idle sleep only; a closed lid still sleeps the Mac unless it is in clamshell mode with an external display and AC power. pmset disablesleep does override the lid but nothing turns it back off, which is the gap lidhold closes."}},
+  {"@type":"Question","name":"Does lidhold work on battery?","acceptedAnswer":{"@type":"Answer","text":"Yes. A battery guard releases the hold below 20% (adjustable) so the machine is never drained to empty, and a thermal guard releases it if the closed laptop gets hot."}},
+  {"@type":"Question","name":"Does lidhold phone home?","acceptedAnswer":{"@type":"Answer","text":"Only on license activation and a weekly validity check. A failed check never revokes anything; a closed laptop keeps working offline. There is no telemetry."}},
+  {"@type":"Question","name":"Can other agents than Claude Code use lidhold?","acceptedAnswer":{"@type":"Answer","text":"Yes. Any tool that can run a command can take a lease: lidhold lease take my-agent --ttl 30m, and lidhold lease release my-agent when done."}}
+ ]}
+]}
+</script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="/favicon-16.png" sizes="16x16" type="image/png">
@@ -108,7 +122,7 @@ footer a{color:var(--muted)}
 <div class="wrap">
 <nav>
   <a class="brand" href="#">lidhold</a>
-  <div class="links"><a href="#how">How it works</a><a href="#guards">Guards</a><a href="#pricing">Pricing</a><a href="#install">Install</a><a href="#faq">FAQ</a></div>
+  <div class="links"><a href="#how">How it works</a><a href="#guards">Guards</a><a href="#pricing">Pricing</a><a href="#install">Install</a><a href="#faq">FAQ</a><a href="/docs/">Docs</a></div>
 </nav>
 
 <div class="hero">
@@ -138,6 +152,31 @@ holding via <span class="ok">pmset</span> for agent leases since 15:15
 <span class="dim">No blocking problems.</span></pre>
   </div>
 </div>
+
+<section id="problem">
+  <p class="eyebrow">The problem</p>
+  <h2>How do I keep my MacBook awake with the lid closed while Claude Code runs?</h2>
+  <p class="sub">Closing the lid is an explicit sleep request. macOS honours it over every user-level tool, so a long agent task gets suspended mid-way and you come back to nothing. The override exists, but it is all-or-nothing and it never turns itself off. lidhold applies it only while an agent is actually working, and undoes it the moment that stops.</p>
+  <div class="two">
+    <div class="guards">
+      <div class="guard"><div class="k">caffeinate</div><div><h3>Stops idle sleep only</h3><p>The lid still wins. It only survives a closed lid in clamshell mode: external display plus AC power.</p></div></div>
+      <div class="guard"><div class="k">pmset</div><div><h3>Overrides the lid, then never stops</h3><p><code>sudo pmset -a disablesleep 1</code> works on AC or battery. Forget to revert it and the Mac cooks in a bag or drains to zero.</p></div></div>
+      <div class="guard"><div class="k">Amphetamine</div><div><h3>A menu bar app for people</h3><p>Good for manual sessions. It has no idea when an agent starts or finishes, so you are back to remembering.</p></div></div>
+      <div class="guard"><div class="k">lidhold</div><div><h3>The override, scoped to the work</h3><p>Held while a lease is alive, released two minutes after the agent stops, reverted by a watchdog if lidhold itself dies, cut short by battery and thermal guards.</p></div></div>
+    </div>
+    <div>
+      <div class="term" aria-label="lidhold doctor output"><div class="bar"><i></i><i></i><i></i><span>lidhold doctor</span></div>
+<pre><span class="p">$</span> lidhold doctor
+What will happen if you close the lid:
+  <span class="ok">[ok]</span>   engine pmset: holds with lid closed, on AC or battery
+  <span class="fail">[fail]</span> engine assert: will NOT survive lid close, no external display
+  -> `lidhold on` would use pmset
+<span class="ok">[ok]</span>   guards: battery floor 20%, thermal nominal, ceiling heavy
+<span class="ok">[ok]</span>   claude-code hooks installed</pre></div>
+      <p class="fine">Run it before you trust anything. It says, for your machine, what will and will not hold.</p>
+    </div>
+  </div>
+</section>
 
 <section id="how">
   <p class="eyebrow">How it works</p>

@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lidhold docs</title>
+<meta name="description" content="Every lidhold command with its options: on, off, status, doctor, lease, hooks, config, license, setup.">
+<link rel="canonical" href="https://lidhold.app/docs/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#14171C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ink:#F7F8FA;--panel:#FFFFFF;--panel-2:#EEF1F5;--line:#DCE0E7;--text:#1A1D23;--muted:#5B6473;
+  --amber:#B8741A;--amber-soft:rgba(184,116,26,.14);--ok:#2E7D4F;--warn:#B8741A;--fail:#B4423A;
+  --glow:rgba(233,162,59,.18);
+  --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --body:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ink:#14171C;--panel:#1B1F26;--panel-2:#22272F;--line:#2A303A;--text:#E9ECF1;--muted:#9AA3B2;
+  --amber:#E9A23B;--amber-soft:rgba(233,162,59,.12);--ok:#6CC28F;--warn:#E9A23B;--fail:#E27069;--glow:rgba(233,162,59,.22);
+}}
+:root[data-theme="dark"]{
+  --ink:#14171C;--panel:#1B1F26;--panel-2:#22272F;--line:#2A303A;--text:#E9ECF1;--muted:#9AA3B2;
+  --amber:#E9A23B;--amber-soft:rgba(233,162,59,.12);--ok:#6CC28F;--warn:#E9A23B;--fail:#E27069;--glow:rgba(233,162,59,.22);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.55;padding-inline:clamp(16px,5vw,64px);padding-block:0 96px}
+a{color:inherit}
+.wrap{max-width:1120px;margin-inline:auto}
+nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:22px;font-family:var(--mono);font-size:14px}
+nav .brand{font-weight:500;letter-spacing:.02em;text-decoration:none}
+nav .brand::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);margin-right:10px;box-shadow:0 0 12px var(--glow)}
+nav .links{display:flex;gap:22px;flex-wrap:wrap}
+nav .links a{text-decoration:none;color:var(--muted)}
+nav .links a:hover,nav .links a:focus-visible{color:var(--text)}
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:48px;align-items:center;padding-block:56px 40px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(44px,7vw,84px);line-height:.98;letter-spacing:-.025em;margin:0 0 20px;text-wrap:balance}
+h1 em{font-style:normal;color:var(--amber)}
+.lede{font-size:clamp(18px,2vw,21px);color:var(--muted);max-width:34ch;margin:0 0 30px}
+.cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:8px;font-weight:600;text-decoration:none;font-size:16px;border:1px solid transparent;transition:transform .12s ease,background .12s ease}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--amber);color:#14171C;border-color:var(--amber)}
+.btn-primary:hover,.btn-primary:focus-visible{filter:brightness(1.06)}
+.btn-ghost{background:transparent;border-color:var(--line);color:var(--text)}
+.btn-ghost:hover,.btn-ghost:focus-visible{background:var(--panel-2)}
+.btn:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.fine{font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:16px}
+.lid{position:relative;margin-top:40px;height:2px;background:var(--line)}
+.lid::after{content:"";position:absolute;left:8%;right:8%;top:2px;height:18px;background:radial-gradient(ellipse at top,var(--glow),transparent 70%)}
+.term{background:var(--panel);border:1px solid var(--line);border-radius:10px;font-family:var(--mono);font-size:14px;line-height:1.6;overflow:hidden;box-shadow:0 30px 60px -40px rgba(0,0,0,.6)}
+.term .bar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12.5px}
+.term .bar i{width:10px;height:10px;border-radius:50%;background:var(--line);display:inline-block}
+.term .bar i:first-child{background:var(--amber);box-shadow:0 0 8px var(--glow)}
+.term pre{margin:0;padding:16px 18px;overflow-x:auto;white-space:pre;color:var(--text)}
+.term .p{color:var(--muted)}
+.term .ok{color:var(--ok)}.term .warn{color:var(--warn)}.term .fail{color:var(--fail)}
+.term .dim{color:var(--muted)}
+section{padding-block:56px;border-top:1px solid var(--line)}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);margin:0 0 12px}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,4vw,44px);letter-spacing:-.02em;line-height:1.05;margin:0 0 14px;text-wrap:balance}
+.sub{color:var(--muted);max-width:60ch;margin:0 0 36px}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;counter-reset:step}
+.step{padding:22px 0 0;border-top:2px solid var(--line);position:relative}
+.step::before{counter-increment:step;content:counter(step,decimal-leading-zero);font-family:var(--mono);font-size:13px;color:var(--amber);display:block;margin-bottom:12px}
+.step h3{font-family:var(--display);font-size:22px;margin:0 0 8px;font-weight:700;letter-spacing:-.01em}
+.step p{margin:0;color:var(--muted);font-size:15.5px}
+.step code{font-family:var(--mono);font-size:13.5px;background:var(--panel-2);padding:2px 6px;border-radius:4px;color:var(--text)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
+.guards{display:grid;gap:14px}
+.guard{display:grid;grid-template-columns:auto 1fr;gap:16px;padding:18px 20px;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.guard .k{font-family:var(--mono);font-size:13px;color:var(--amber);padding-top:3px;white-space:nowrap}
+.guard h3{margin:0 0 4px;font-size:17px;font-weight:600}
+.guard p{margin:0;color:var(--muted);font-size:15px}
+.price{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;align-items:center}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:30px;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:var(--amber)}
+.amount{font-family:var(--display);font-weight:800;font-size:64px;letter-spacing:-.03em;line-height:1;margin:6px 0 2px;font-variant-numeric:tabular-nums}
+.amount small{font-size:18px;font-weight:500;letter-spacing:0;color:var(--muted);margin-left:6px}
+.card ul{list-style:none;padding:0;margin:20px 0 26px;display:grid;gap:10px;color:var(--text)}
+.card li{padding-left:22px;position:relative;font-size:15.5px}
+.card li::before{content:"";position:absolute;left:0;top:.62em;width:10px;height:2px;background:var(--amber)}
+.free{font-size:15px;color:var(--muted)}
+.free strong{color:var(--text);font-weight:600}
+.install pre{margin:0}
+.faq{display:grid;gap:0;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line);padding:18px 0}
+.faq summary{cursor:pointer;font-weight:600;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:var(--mono);color:var(--amber);flex:none}
+.faq details[open] summary::after{content:"\2212"}
+.faq p{margin:12px 0 0;color:var(--muted);max-width:68ch}
+footer{padding-top:40px;border-top:1px solid var(--line);font-family:var(--mono);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer a{color:var(--muted)}
+@media (max-width:860px){.hero,.two,.price{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.steps{grid-template-columns:1fr}.amount{font-size:52px}}
+@media (prefers-reduced-motion:no-preference){.lid::after{animation:hold 6s ease-in-out infinite}@keyframes hold{0%,100%{opacity:.85}50%{opacity:1}}}
+</style>
+<style>
+.docs h2{font-size:clamp(24px,3vw,32px);margin-top:48px}
+.docs .term{margin:18px 0 0}
+.docs p{color:var(--muted);max-width:68ch}
+.toc{font-family:var(--mono);font-size:14px;display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 8px;padding:0;list-style:none}
+.toc a{color:var(--muted);text-decoration:none}.toc a:hover{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="wrap docs">
+<nav>
+  <a class="brand" href="/">lidhold</a>
+  <div class="links"><a href="/#how">How it works</a><a href="/#pricing">Pricing</a><a href="/#install">Install</a><a href="/docs/">Docs</a></div>
+</nav>
+<section style="border-top:0;padding-top:24px">
+  <p class="eyebrow">Docs</p>
+  <h2 style="margin-top:0">Every command, straight from <code>--help</code>.</h2>
+  <p>This page is generated from the installed binary, so it matches what <code>lidhold --help</code> prints. Start with <code>lidhold doctor</code>: it tells you exactly what will and will not hold on your machine and why.</p>
+  <ul class="toc">
+    <li><a href="#state">State model</a></li><li><a href="#agents">Agents and leases</a></li><li><a href="#guards">Guards</a></li><li><a href="#license">License</a></li><li><a href="#reference">Reference</a></li>
+  </ul>
+
+  <h2 id="state">State model</h2>
+  <p>A hold is either <strong>manual</strong> (<code>lidhold on</code>, optionally <code>--for 2h</code>) or <strong>lease-driven</strong> (started by the daemon because an agent holds a lease). <code>lidhold off</code> ends either kind and drops every lease. <code>lidhold status</code> exits 0 when idle and 10 when holding, so it is usable in shell prompts.</p>
+  <p>Two engines exist. <code>pmset</code> flips <code>pmset disablesleep</code> through a root helper and survives a closed lid on AC or battery. <code>assert</code> takes IOKit power assertions with no root and only survives a closed lid in clamshell mode (external display plus AC). <code>lidhold on</code> picks <code>pmset</code> when the helper is installed and refuses to start an <code>assert</code> hold that would not survive the lid unless you pass <code>--force</code>.</p>
+
+  <h2 id="agents">Agents and leases</h2>
+  <p>A lease is a named entry with a TTL. The daemon holds while any lease is alive and releases when the last one expires, so a crashed agent can never pin the machine. Claude Code refreshes its lease on session start, every tool call (before and after), shortens it to a 2-minute grace on Stop, and drops it on SessionEnd. Defaults live in the config file under <code>[hooks]</code>: <code>lease_ttl = "30m"</code>, <code>stop_grace = "2m"</code>.</p>
+  <div class="term"><div class="bar"><i></i><i></i><i></i><span>any agent</span></div><pre><span class="p">$</span> lidhold lease take my-agent --ttl 30m
+<span class="p">$</span> lidhold lease list
+<span class="p">$</span> lidhold lease release my-agent</pre></div>
+
+  <h2 id="guards">Guards</h2>
+  <p>Battery: releases below the floor when on battery (default 20%, 0 disables). Thermal: releases when macOS thermal pressure reaches the ceiling (default <code>heavy</code>). Thermal outranks battery. Both apply to manual and lease holds, refuse to start a hold when already tripped (exit 2, <code>--force</code> overrides), and are checked every 30 seconds while holding. Configure with <code>lidhold config init</code> then edit the file, or per hold with <code>--min-battery</code> and <code>--max-thermal</code>.</p>
+
+  <h2 id="license">License</h2>
+  <p>Manual holds and the guards are free. Agent hooks and leases need a license after a 7-day trial that starts on first use. One key covers up to 3 machines; <code>lidhold license deactivate</code> frees a slot. The machine is identified by a hash of its hardware UUID, so an OS reinstall does not use a second slot. The daemon re-checks the key weekly; a failed network call never revokes anything, so a closed laptop keeps working offline.</p>
+
+  <h2 id="reference">Reference</h2>
+  <div class="term"><div class="bar"><i></i><i></i><i></i><span>lidhold --help</span></div>
+<pre><span class="p">$ lidhold --help</span>
+Keep your Mac awake with the lid closed while agents work.
+
+Usage: lidhold &lt;COMMAND&gt;
+
+Commands:
+  on         Hold the Mac awake now
+  off        Release the hold
+  status     Show current state
+  doctor     Diagnose what will and won&#x27;t hold on this machine
+  helper     Manage the privileged helper (needed for real closed-lid hold)
+  daemon     Manage the background daemon that keeps holds alive
+  setup      Finish setup for an already-installed binary: helper, daemon, hooks, doctor
+  install    Install lidhold and the privileged helper system-wide (run with sudo)
+  uninstall  Remove the system-wide install and the privileged helper (run with sudo)
+  config     Manage guard thresholds
+  lease      Agent-driven holds: the Mac stays awake while any lease is alive
+  hook       Entry point for an agent&#x27;s hook config; reads the event from stdin
+  hooks      Install or remove the hook config that makes an agent take leases
+  license    Activate, check, or release this machine&#x27;s license
+  help       Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version</pre>
+<pre><span class="p">$ lidhold on --help</span>
+Hold the Mac awake now
+
+Usage: lidhold on [OPTIONS]
+
+Options:
+      --for &lt;FOR&gt;                  Release automatically after this long, e.g. 2h, 45m
+      --engine &lt;ENGINE&gt;            Force an engine instead of auto-selecting [possible values: pmset, assert]
+      --force                      Don&#x27;t warn when the chosen engine won&#x27;t survive lid close, and ignore guards
+      --min-battery &lt;MIN_BATTERY&gt;  Release below this battery percentage; 0 disables the battery guard
+      --max-thermal &lt;MAX_THERMAL&gt;  Release at this thermal pressure or above [possible values: nominal, moderate, heavy, trapping, sleeping]
+  -h, --help                       Print help</pre>
+<pre><span class="p">$ lidhold off --help</span>
+Release the hold
+
+Usage: lidhold off
+
+Options:
+  -h, --help  Print help</pre>
+<pre><span class="p">$ lidhold status --help</span>
+Show current state
+
+Usage: lidhold status [OPTIONS]
+
+Options:
+      --json  
+  -h, --help  Print help</pre>
+<pre><span class="p">$ lidhold doctor --help</span>
+Diagnose what will and won&#x27;t hold on this machine
+
+Usage: lidhold doctor
+
+Options:
+  -h, --help  Print help</pre>
+<pre><span class="p">$ lidhold lease take --help</span>
+error: unrecognized subcommand &#x27;lease take&#x27;
+
+  tip: a similar subcommand exists: &#x27;lease&#x27;
+
+Usage: lidhold &lt;COMMAND&gt;
+
+For more information, try &#x27;--help&#x27;.</pre>
+<pre><span class="p">$ lidhold hooks install --help</span>
+error: unrecognized subcommand &#x27;hooks install&#x27;
+
+  tip: some similar subcommands exist: &#x27;uninstall&#x27;, &#x27;hook&#x27;, &#x27;hooks&#x27;
+
+Usage: lidhold &lt;COMMAND&gt;
+
+For more information, try &#x27;--help&#x27;.</pre>
+<pre><span class="p">$ lidhold license activate --help</span>
+error: unrecognized subcommand &#x27;license activate&#x27;
+
+  tip: some similar subcommands exist: &#x27;lease&#x27;, &#x27;license&#x27;
+
+Usage: lidhold &lt;COMMAND&gt;
+
+For more information, try &#x27;--help&#x27;.</pre>
+<pre><span class="p">$ lidhold config --help</span>
+Manage guard thresholds
+
+Usage: lidhold config &lt;COMMAND&gt;
+
+Commands:
+  init  Write a commented config file with the default thresholds
+  show  Show the effective thresholds and where they came from
+  help  Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help  Print help</pre>
+<pre><span class="p">$ lidhold setup --help</span>
+Finish setup for an already-installed binary: helper, daemon, hooks, doctor
+
+Usage: lidhold setup
+
+Options:
+  -h, --help  Print help</pre>
+  </div>
+</section>
+<footer><span>lidhold.app, macOS 14+</span><span><a href="https://github.com/aanjaneykumarverma/homebrew-tap">Homebrew tap</a> &middot; <a href="mailto:aanjaneykumar.verma@gmail.com">Support</a></span></footer>
+</div>
+</body>
+</html>
