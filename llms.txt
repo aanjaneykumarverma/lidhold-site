@@ -8,7 +8,7 @@ Closing a MacBook's lid is an explicit sleep request that user-level tools such 
 
 ## How agents use it
 
-Supported agents: Claude Code and Cursor. Connect once with `lidhold hooks install claude-code` or `lidhold hooks install cursor` (`lidhold setup` does this for every agent it detects), then restart open sessions. Nothing per session after that. Cursor support covers both the cursor-agent CLI and the IDE agent via ~/.cursor/hooks.json.
+Supported agents: Claude Code, Cursor, and GitHub Copilot CLI. `lidhold setup` detects and wires every one it finds; or connect one with `lidhold hooks install claude-code|cursor|copilot`, then restart open sessions. Nothing per session after that. Cursor support covers both the cursor-agent CLI and the IDE agent via ~/.cursor/hooks.json; Copilot hooks go under hooks in ~/.copilot/config.json.
 
 Claude Code hooks call `lidhold hook claude-code` on session start, each tool call, stop, and session end. Each event refreshes, shortens, or drops a lease for that session. Any other tool can do the same with `lidhold lease take <name> --ttl 30m` and `lidhold lease release <name>`.
 

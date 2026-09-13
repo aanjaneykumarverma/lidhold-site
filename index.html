@@ -7,7 +7,7 @@
 <link rel="canonical" href="https://lidhold.app/">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
- {"@type":"SoftwareApplication","name":"lidhold","url":"https://lidhold.app","applicationCategory":"DeveloperApplication","operatingSystem":"macOS 14 or newer","description":"Keeps a Mac awake with the lid closed for exactly as long as a task runs: a coding agent such as Claude Code or Cursor, or any command wrapped with lidhold run. Battery and thermal guards release the hold automatically.","offers":{"@type":"Offer","price":"19","priceCurrency":"USD","url":"https://checkout.dodopayments.com/buy/pdt_0NnVUeNKyDzDdqiLRRDQ6?quantity=1","description":"One-time purchase, one person, up to 3 machines, 7-day free trial"},"softwareHelp":{"@type":"CreativeWork","url":"https://lidhold.app/docs/"},"installUrl":"https://github.com/aanjaneykumarverma/homebrew-tap"},
+ {"@type":"SoftwareApplication","name":"lidhold","url":"https://lidhold.app","applicationCategory":"DeveloperApplication","operatingSystem":"macOS 14 or newer","description":"Keeps a Mac awake with the lid closed for exactly as long as a task runs: a coding agent such as Claude Code, Cursor, or GitHub Copilot CLI, or any command wrapped with lidhold run. Battery and thermal guards release the hold automatically.","offers":{"@type":"Offer","price":"19","priceCurrency":"USD","url":"https://checkout.dodopayments.com/buy/pdt_0NnVUeNKyDzDdqiLRRDQ6?quantity=1","description":"One-time purchase, one person, up to 3 machines, 7-day free trial"},"softwareHelp":{"@type":"CreativeWork","url":"https://lidhold.app/docs/"},"installUrl":"https://github.com/aanjaneykumarverma/homebrew-tap"},
  {"@type":"FAQPage","mainEntity":[
   {"@type":"Question","name":"How do I keep my MacBook awake with the lid closed while Claude Code runs?","acceptedAnswer":{"@type":"Answer","text":"Install lidhold (brew install aanjaneykumarverma/tap/lidhold, then lidhold setup). Its Claude Code hooks take a lease while the agent works, the Mac stays awake through a closed lid on AC or battery, and the hold is released two minutes after the agent stops."}},
   {"@type":"Question","name":"Why does lidhold need sudo?","acceptedAnswer":{"@type":"Answer","text":"Closing the lid is an explicit sleep request that user-level tools cannot override. lidhold installs a small root helper that sets pmset disablesleep and reverts it automatically after 90 seconds without a heartbeat. Only admin users can talk to it."}},
@@ -15,7 +15,7 @@
   {"@type":"Question","name":"Does lidhold work on battery?","acceptedAnswer":{"@type":"Answer","text":"Yes. A battery guard releases the hold below 20% (adjustable) so the machine is never drained to empty, and a thermal guard releases it if the closed laptop gets hot."}},
   {"@type":"Question","name":"Does lidhold phone home?","acceptedAnswer":{"@type":"Answer","text":"Only on license activation and a weekly validity check. A failed check never revokes anything; a closed laptop keeps working offline. There is no telemetry."}},
   {"@type":"Question","name":"How do I keep my MacBook awake with the lid closed while a long build or test suite runs?","acceptedAnswer":{"@type":"Answer","text":"Wrap the command: lidhold run -- cargo test. lidhold holds the Mac awake for exactly as long as the command runs, on AC or battery, then releases it. The exit code passes through and Ctrl-C reaches the command."}},
-  {"@type":"Question","name":"Can other agents than Claude Code use lidhold?","acceptedAnswer":{"@type":"Answer","text":"Yes. Cursor is supported with lidhold hooks install cursor, covering both the cursor-agent CLI and the IDE agent. Any other tool that can run a command can take a lease: lidhold lease take my-agent --ttl 30m, and lidhold lease release my-agent when done."}}
+  {"@type":"Question","name":"Can other agents than Claude Code use lidhold?","acceptedAnswer":{"@type":"Answer","text":"Yes. Cursor (lidhold hooks install cursor, covering both the cursor-agent CLI and the IDE agent) and GitHub Copilot CLI (lidhold hooks install copilot) are supported; lidhold setup wires every agent it detects. Any other tool that can run a command can take a lease: lidhold lease take my-agent --ttl 30m, and lidhold lease release my-agent when done."}}
  ]}
 ]}
 </script>
@@ -186,7 +186,7 @@ What will happen if you close the lid:
   <p class="sub">Every tool call your agent makes refreshes a lease. While a lease is alive, the Mac stays awake through a closed lid. When the agent finishes, the lease winds down and the Mac sleeps like normal.</p>
   <div class="steps">
     <div class="step"><h3>Install once</h3><p><code>brew install</code>, then <code>lidhold setup</code>. One sudo prompt for the helper that overrides lid sleep.</p></div>
-    <div class="step"><h3>Start work</h3><p>Claude Code or Cursor takes a lease through its hooks the moment it starts working. Anything else, wrap it: <code>lidhold run -- cargo test</code>.</p></div>
+    <div class="step"><h3>Start work</h3><p>Claude Code, Cursor, or Copilot CLI takes a lease through its hooks the moment it starts working. Anything else, wrap it: <code>lidhold run -- cargo test</code>.</p></div>
     <div class="step"><h3>Close the lid</h3><p>The Mac keeps running, on AC or battery. Walk away, put it in your bag, get coffee.</p></div>
     <div class="step"><h3>It finishes</h3><p>Two minutes after the last turn, the lease expires and the Mac sleeps. Follow up sooner and it stays awake.</p></div>
   </div>
@@ -230,7 +230,7 @@ What will happen if you close the lid:
       <p class="eyebrow" style="color:var(--muted)">lidhold license</p>
       <div class="amount">$19<small>one time</small></div>
       <ul>
-        <li>Agent hooks for Claude Code and Cursor, <code>lidhold run</code> for any command, and a lease API any tool can call</li>
+        <li>Agent hooks for Claude Code, Cursor, and GitHub Copilot CLI, <code>lidhold run</code> for any command, and a lease API any tool can call</li>
         <li>Up to 3 machines, move them yourself with <code>lidhold license deactivate</code></li>
         <li>A year of updates</li>
         <li>Works offline: a closed laptop never phones home to stay awake</li>
@@ -251,7 +251,7 @@ What will happen if you close the lid:
 <span class="ok">[ok]</span>   privileged helper installed
 <span class="ok">[ok]</span>   per-user daemon running
 <span class="ok">[ok]</span>   Claude Code hooks installed (restart any open session)</pre></div>
-  <p class="fine">Connecting an agent: <code>lidhold setup</code> installs hooks for every agent it finds, Claude Code and Cursor today. Installed one later, or want to check? <code>lidhold hooks install claude-code</code> or <code>lidhold hooks install cursor</code>, then restart any open session. <code>lidhold hooks status &lt;agent&gt;</code> shows what is wired. Nothing to do per session after that.</p>
+  <p class="fine">Connecting an agent: <code>lidhold setup</code> installs hooks for every agent it finds: Claude Code, Cursor, and GitHub Copilot CLI. Installed one later, or want to check? <code>lidhold hooks install claude-code</code>, <code>cursor</code>, or <code>copilot</code>, then restart any open session. <code>lidhold hooks status &lt;agent&gt;</code> shows what is wired. Nothing to do per session after that.</p>
   <p class="fine">Then enter your key: <code>lidhold license activate &lt;key&gt;</code>. It arrives by email right after purchase.</p>
 </section>
 
@@ -264,7 +264,7 @@ What will happen if you close the lid:
     <details><summary>What if the agent is waiting for me?</summary><p>A permission prompt or a question means no tool calls, so the lease runs out and the Mac sleeps. Nothing is working, so nothing is held. Auto mode or pre-approved permissions avoid it.</p></details>
     <details><summary>Does it phone home?</summary><p>Only when you activate, and once a week after that to check the key is still valid. If that check cannot reach the server, nothing changes. A closed laptop keeps working offline.</p></details>
     <details><summary>Can I use it without an agent at all?</summary><p>Yes. <code>lidhold run -- &lt;command&gt;</code> holds for exactly as long as that command runs and releases when it exits, whatever the exit code. A test suite, a deploy, a long download.</p></details>
-    <details><summary>Other agents than Claude Code?</summary><p>Cursor is supported the same way: <code>lidhold hooks install cursor</code> wires its agent hooks, for both the <code>cursor-agent</code> CLI and the IDE. Any other tool that can run a command can take a lease directly: <code>lidhold lease take my-agent --ttl 10m</code>.</p></details>
+    <details><summary>Other agents than Claude Code?</summary><p>Cursor and GitHub Copilot CLI are supported the same way: <code>lidhold hooks install cursor</code> (both the <code>cursor-agent</code> CLI and the IDE) or <code>lidhold hooks install copilot</code>. Any other tool that can run a command can take a lease directly: <code>lidhold lease take my-agent --ttl 10m</code>.</p></details>
     <details><summary>Refunds?</summary><p>Email within 14 days and you get one. The 7-day trial exists so you rarely need to.</p></details>
   </div>
 </section>
