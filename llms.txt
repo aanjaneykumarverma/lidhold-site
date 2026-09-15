@@ -35,7 +35,7 @@ Holds for exactly the command's lifetime: lease taken before it starts, refreshe
 
 ## Pricing
 
-Free: manual holds, status, doctor, and both guards. Paid: agent hooks, leases, and lidhold run, USD 19 one time, one person on up to 3 machines, 7-day trial without a key. No subscription. No telemetry.
+Free: manual holds, status, doctor, and both guards. Paid: agent hooks, leases, and lidhold run, USD 19 one time, one person on up to 3 machines, free updates forever, 7-day trial without a key. No subscription, no renewal. No telemetry.
 
 ## Links
 

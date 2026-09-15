@@ -147,7 +147,7 @@ lidhold: `cargo` finished, lease released</pre></div>
   <p>Battery: releases below the floor when on battery (default 20%, 0 disables). Thermal: releases when macOS thermal pressure reaches the ceiling (default <code>heavy</code>). Thermal outranks battery. Both apply to manual and lease holds, refuse to start a hold when already tripped (exit 2, <code>--force</code> overrides), and are checked every 30 seconds while holding. Configure with <code>lidhold config init</code> then edit the file, or per hold with <code>--min-battery</code> and <code>--max-thermal</code>.</p>
 
   <h2 id="license">License</h2>
-  <p>Manual holds and the guards are free. Agent hooks and leases need a license after a 7-day trial that starts on first use. One key covers up to 3 machines; <code>lidhold license deactivate</code> frees a slot. The machine is identified by a hash of its hardware UUID, so an OS reinstall does not use a second slot. The daemon re-checks the key weekly; a failed network call never revokes anything, so a closed laptop keeps working offline.</p>
+  <p>Manual holds and the guards are free. Agent hooks and leases need a license after a 7-day trial that starts on first use. One key covers up to 3 machines and never expires; updates are free for good. <code>lidhold license deactivate</code> frees a slot. The machine is identified by a hash of its hardware UUID, so an OS reinstall does not use a second slot. The daemon re-checks the key weekly; a failed network call never revokes anything, so a closed laptop keeps working offline.</p>
 
   <h2 id="reference">Reference</h2>
   <div class="term"><div class="bar"><i></i><i></i><i></i><span>lidhold --help</span></div>
